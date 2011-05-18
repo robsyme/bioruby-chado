@@ -1,6 +1,9 @@
 = bio-chado
 
-Description goes here.
+This is a personal project that might later get expanded to something more general.
+Chado is a great way of storing deep annotation data, but there are no ruby libraries at the moment that map the schema. This is a first step towards such a library.
+
+Down the track, it would be great to be able to return Bio::Sequence objects from the DB.  
 
 == Contributing to bio-chado
  
