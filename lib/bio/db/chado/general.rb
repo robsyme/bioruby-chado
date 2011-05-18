@@ -12,7 +12,7 @@ module Bio
         has n, :dbxrefs
       end
 
-      class dbxref
+      class DBxref
         include DataMapper::Resource
 
         property :id, Serial
