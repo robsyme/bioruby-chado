@@ -19,17 +19,17 @@ module Bio
         property :publisher, String
         property :pubplace, String
 
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', child_key[:type_id]
+        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
 
         has n, :feature_cvterms, 'Bio::Chado::Sequence::FeatureCVTerm', :child_key => [:pub_id]
         has n, :feature_cvterm_pubs, 'Bio::Chado::Sequence::FeatureCVTermPub', :child_key => [:pub_id]
         has n, :feature_pubs, 'Bio::Chado::Sequence::FeaturePub', :child_key => [:pub_id]
         has n, :feature_relationship_pubs, 'Bio::Chado::Sequence::FeatureRelationshipPub', :child_key => [:pub_id]
         has n, :feature_relationshipprop_pubs, 'Bio::Chado::Sequence::FeatureRelationshippropPub', :child_key => [:pub_id]
-        has n, :feature_synonyms, 'Bio::Chado::Feature::FeatureSynonym', :child_key => [:pub_id]
-        has n, :featureloc_pubs, 'Bio::Chado::Feature::FeatureLoc', :child_key [:pub_id]
-        has n, :feauremap_pubs, 'Bio::Chado::Feature::FeatureMap', :child_key [:pub_id]
-        has n, :featureprop_pubs, 'Bio::Chado::Feature::FeaturepropPub', :child_key [:pub_id]
+        has n, :feature_synonyms, 'Bio::Chado::Sequence::FeatureSynonym', :child_key => [:pub_id]
+        has n, :featureloc_pubs, 'Bio::Chado::Sequence::Featureloc', :child_key => [:pub_id]
+        #has n, :feauremap_pubs, 'Bio::Chado::Map::FeatureMap', :child_key => [:pub_id]
+        has n, :featureprop_pubs, 'Bio::Chado::Sequence::FeaturepropPub', :child_key => [:pub_id]
         has n, :pub_dbxrefs, 'PubDBxref', :child_key => [:pub_id]
         has n, :pub_relationships, 'PubRelationship', :child_key => [:pub_id]
         has n, :pubauthors, 'Pubauthor', :child_key => [:pub_id]
@@ -44,7 +44,7 @@ module Bio
         property :is_current, Boolean
 
         belongs_to :pub, 'Pub', :child_key => [:pub_id]
-        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key[:dbxref_id]
+        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
       end
 
       class PubRelationship

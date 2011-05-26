@@ -20,6 +20,7 @@ module Bio
         storage_names[:default] = 'dbxref'
         
         property :dbxref_id, Serial
+        property :accession, String
         property :version, String
         property :description, Text
 

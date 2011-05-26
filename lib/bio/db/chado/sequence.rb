@@ -26,9 +26,9 @@ module Bio
         has n, :feature_pubs, 'FeaturePub', :child_key => [:feature_id]
         has n, :feature_relationships, 'FeatureRelationship', :child_key => [:feature_id]
         has n, :featurelocs, 'Featureloc', :child_key => [:feature_id]
-        has n, :featureposs, 'Featurepos', :child_key => [:feature_id]
+        #has n, :featureposs, 'Bio::Chado::Map::Featurepos', :child_key => [:feature_id]
         has n, :feaureprops, 'Featureprop', :child_key => [:feature_id]
-        has n, :featureranges, 'Featurerange', :child_key => [:feature_id]
+        #has n, :featureranges, 'Bio::Chado::Map::Featurerange', :child_key => [:feature_id]
       end
 
       class FeatureCVTerm
@@ -150,6 +150,19 @@ module Bio
         belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
       end
 
+      class FeatureRelationshipprop
+        include DataMapper::Resource
+        storage_names[:default] = 'feature_relationshipprop'
+
+        property :feature_relationshipprop_id, Serial
+        property :value, Text
+        property :rank, Integer
+
+        belongs_to :feature_relationship, 'FeatureRelationship', :child_key => [:feature_relationship_id]
+        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+      end
+
+
       class FeatureSynonym
         include DataMapper::Resource
         storage_names[:default] = 'feature_synonym'
@@ -208,7 +221,7 @@ module Bio
 
       class FeaturepropPub
         include DataMapper::Resource
-        stroage_names[:default] = 'featureprop_pub'
+        storage_names[:default] = 'featureprop_pub'
 
         property :featureprop_pub_id, Serial
 

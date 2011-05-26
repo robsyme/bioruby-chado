@@ -14,9 +14,9 @@ module Bio
         property :comment, Text
 
 #        has_many :features, 'Bio::Chado::Sequence::Feature', :child_key[:organism_id]
-        has n, :organism_dbxrefs, 'OrganismDBxref', :child_key[:organism_id]
-        has n, :organism_props, 'OrganismProp', :child_key[:organism_id]
-        has n, :features, 'Bio::Chado::Sequence::Feature', :child_key [:organism_id]
+        has n, :organism_dbxrefs, 'OrganismDBxref', :child_key => [:organism_id]
+        has n, :organism_props, 'OrganismProp', :child_key => [:organism_id]
+        has n, :features, 'Bio::Chado::Sequence::Feature', :child_key => [:organism_id]
       end
 
       class OrganismDBxref
