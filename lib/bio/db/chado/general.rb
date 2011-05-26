@@ -20,12 +20,13 @@ module Bio
         storage_names[:default] = 'dbxref'
         
         property :dbxref_id, Serial
-        property :accession, String
         property :version, String
         property :description, Text
 
         has n, :cvterms, 'Bio::Chado::CV::CVTerm', :child_key => [:dbxref_id]
-
+        has n, :features, 'Bio::Chado::Sequence::Feature', :child_key => [:dbxref_id]
+        has n, :feature_cvterm_dbxrefs, 'Bio::Chado::Sequence::FeatureCVTermDBxref', :child_key => [:dbxref_id]
+        
         belongs_to :db, 'DB', :child_key => [:db_id]
       end
 

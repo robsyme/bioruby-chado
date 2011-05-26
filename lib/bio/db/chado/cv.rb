@@ -24,7 +24,13 @@ module Bio
         property :is_relationshiptype, Integer
 
         has n, :cverm_dbxrefs, 'CVTermDBxref', :child_key => [:cvterm_id]
-
+        has n, :pubs, 'Bio::Chado::Pub::Pub', :child_key => [:type_id]
+        has n, :pub_relationships, 'Bio::Chado::Pub::PubRelationship', :child_key => [:type_id]
+        has n, :pubprops, 'Bio::Chado::Pub::Pubprop', :child_key => [:type_id]
+        has n, :organism_props, 'Bio::Chado::Organism::OrganismProp', :child_key => [:type_id]
+        has n, :features, 'Bio::Chado::Sequence::Feature', :child_key => [:type_id]
+        has n, :feature_cvterms, 'Bio::Chado::Sequence::FeatureCVTerm', :child_key => [:cvterm_id]
+        
         belongs_to :cv, 'CV', :child_key => [:cv_id]
         belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
       end
