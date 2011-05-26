@@ -4,6 +4,7 @@ source "http://rubygems.org"
 #   gem "activesupport", ">= 2.3.5"
 
 gem "data_mapper", ">=1.1.0"
+gem "obo", ">0"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
