@@ -35,7 +35,26 @@ module Bio
         # convenience method to create organism properties using
         # cvterms from the ontology with the given name.
         # Accepts a hash or options.
-        # TODO: Describe the options and what they do.
+        #
+        # The options hash takes organism properties in the form
+        # property_name => value.
+        # 
+        #
+        # @param [Hash] opts of options.
+        #   Defaults are:
+        #   :autocreate => false
+        #   :cv_name => 'organism_property'
+        #   :db_name => 'null'
+        #   :dbxref_accession_prefix => 'autocreated_'
+        #   :definitions => {}
+        #   :accessions => {}
+        #   :versions => {}
+        #   :allow_duplicate_values => false
+        # @return [Hash] Hash of property_name => OrganismProp
+        # @example The organism is a model organism
+        #   yeast.create_organismprops({ :model_organism => true,
+        #                                :db_name => 'Wikipedia',
+        #                                :accessions => {:model_organism => "Model_organism"}})
         def create_organismprops(opts={})
           default_opts = {
             :autocreate => false,
