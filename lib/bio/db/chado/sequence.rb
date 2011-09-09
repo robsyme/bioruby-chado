@@ -26,9 +26,10 @@ module Bio
         has n, :feature_pubs, 'FeaturePub', :child_key => [:feature_id]
         has n, :feature_relationships, 'FeatureRelationship', :child_key => [:feature_id]
         has n, :featurelocs, 'Featureloc', :child_key => [:feature_id]
-        #has n, :featureposs, 'Bio::Chado::Map::Featurepos', :child_key => [:feature_id]
         has n, :feaureprops, 'Featureprop', :child_key => [:feature_id]
-        #has n, :featureranges, 'Bio::Chado::Map::Featurerange', :child_key => [:feature_id]
+
+        #TODO: has n, :featureposs, 'Bio::Chado::Map::Featurepos', :child_key => [:feature_id]
+        #TODO: has n, :featureranges, 'Bio::Chado::Map::Featurerange', :child_key => [:feature_id]
       end
 
       class FeatureCVTerm

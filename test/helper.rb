@@ -1,5 +1,8 @@
 require 'rubygems'
 require 'bundler'
+require 'minitest/spec'
+require 'minitest/autorun'
+
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -17,3 +20,14 @@ class MiniTest::Unit::TestCase
 end
 
 MiniTest::Unit.autorun
+
+
+DataMapper.setup(:default, {
+                   :adapter => "postgres",
+                   :database => "chado_test",
+                   :username => "rob",
+                   :password => "grayishgymnosperm",
+                   :host => "localhost"})
+DataMapper.finalize
+
+include Bio::Chado

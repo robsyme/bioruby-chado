@@ -28,7 +28,10 @@ module Bio
         has n, :feature_relationshipprop_pubs, 'Bio::Chado::Sequence::FeatureRelationshippropPub', :child_key => [:pub_id]
         has n, :feature_synonyms, 'Bio::Chado::Sequence::FeatureSynonym', :child_key => [:pub_id]
         has n, :featureloc_pubs, 'Bio::Chado::Sequence::Featureloc', :child_key => [:pub_id]
-        #has n, :feauremap_pubs, 'Bio::Chado::Map::FeatureMap', :child_key => [:pub_id]
+
+        #TODO: has n, :feauremap_pubs, 'Bio::Chado::Map::FeatureMap', :child_key => [:pub_id]
+
+
         has n, :featureprop_pubs, 'Bio::Chado::Sequence::FeaturepropPub', :child_key => [:pub_id]
         has n, :pub_dbxrefs, 'PubDBxref', :child_key => [:pub_id]
         has n, :pub_relationships, 'PubRelationship', :child_key => [:pub_id]

@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{bio-chado}
+  s.name = "bio-chado"
   s.version = "0.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["robsyme"]
-  s.date = %q{2011-05-18}
-  s.description = %q{A library that allows you to pull ruby objects out of a Chado-schema database}
-  s.email = %q{rob.syme@gmail.com}
+  s.date = "2011-09-09"
+  s.description = "A library that allows you to pull ruby objects out of a Chado-schema database"
+  s.email = "rob.syme@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -26,40 +26,65 @@ Gem::Specification.new do |s|
     "VERSION",
     "bio-chado.gemspec",
     "lib/bio-chado.rb",
-    "test/helper.rb",
-    "test/test_bio-chado.rb"
+    "lib/bio/db/chado/chado.rb",
+    "lib/bio/db/chado/cv.rb",
+    "lib/bio/db/chado/general.rb",
+    "lib/bio/db/chado/organism.rb",
+    "lib/bio/db/chado/pub.rb",
+    "lib/bio/db/chado/sequence.rb",
+    "test/data/README.txt",
+    "test/data/chado_test.backup",
+    "test/data/ro.obo",
+    "test/data/so_2_4_3.obo",
+    "test/data/temp",
+    "test/helper.rb"
   ]
-  s.homepage = %q{http://github.com/robsyme/bioruby-chado}
+  s.homepage = "http://github.com/robsyme/bioruby-chado"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.0}
-  s.summary = %q{A Chado mapping for bioruby using DataMapper}
+  s.rubygems_version = "1.8.10"
+  s.summary = "A Chado mapping for bioruby using DataMapper"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<data_mapper>, [">= 1.1.0"])
-      s.add_development_dependency(%q<minitest>, [">= 0"])
+      s.add_runtime_dependency(%q<obo>, ["> 0"])
+      s.add_runtime_dependency(%q<bio>, [">= 1.4.2"])
+      s.add_runtime_dependency(%q<dm-postgres-adapter>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-constraints>, [">= 1.1.0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_development_dependency(%q<bio>, [">= 1.4.1"])
+      s.add_development_dependency(%q<rdoc>, [">= 3.9.4"])
+      s.add_development_dependency(%q<yard>, [">= 0.7"])
+      s.add_development_dependency(%q<yard-dm>, [">= 0.1.1"])
     else
       s.add_dependency(%q<data_mapper>, [">= 1.1.0"])
-      s.add_dependency(%q<minitest>, [">= 0"])
+      s.add_dependency(%q<obo>, ["> 0"])
+      s.add_dependency(%q<bio>, [">= 1.4.2"])
+      s.add_dependency(%q<dm-postgres-adapter>, [">= 0"])
+      s.add_dependency(%q<dm-constraints>, [">= 1.1.0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<bio>, [">= 1.4.1"])
+      s.add_dependency(%q<rdoc>, [">= 3.9.4"])
+      s.add_dependency(%q<yard>, [">= 0.7"])
+      s.add_dependency(%q<yard-dm>, [">= 0.1.1"])
     end
   else
     s.add_dependency(%q<data_mapper>, [">= 1.1.0"])
-    s.add_dependency(%q<minitest>, [">= 0"])
+    s.add_dependency(%q<obo>, ["> 0"])
+    s.add_dependency(%q<bio>, [">= 1.4.2"])
+    s.add_dependency(%q<dm-postgres-adapter>, [">= 0"])
+    s.add_dependency(%q<dm-constraints>, [">= 1.1.0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
     s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<bio>, [">= 1.4.1"])
+    s.add_dependency(%q<rdoc>, [">= 3.9.4"])
+    s.add_dependency(%q<yard>, [">= 0.7"])
+    s.add_dependency(%q<yard-dm>, [">= 0.1.1"])
   end
 end
 
