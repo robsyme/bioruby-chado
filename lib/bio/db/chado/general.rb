@@ -13,7 +13,10 @@ module Bio
       # for URIs, URNs (e.g. LSIDs). We can do this by treating the
       # URL as a URI - however, some applications may expect this to
       # be resolvable - to be decided.
-      
+      #
+      # Required properties for creating new {DB} are:
+      # - name - String
+
       class DB
         include DataMapper::Resource
         storage_names[:default] = 'db'
@@ -35,6 +38,11 @@ module Bio
       # identifiers (in a linking table <T>_dbxref). A dbxref is
       # generally written as <DB>:<ACCESSION> or as
       # <DB>:<ACCESSION>:<VERSION>.
+      #
+      # Required properties for creating new {DBxref} are:
+      # - db - {Bio::Chado::General::DB}
+      # - accession - String
+      # - version - String
       
       class DBxref
         include DataMapper::Resource

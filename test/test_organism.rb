@@ -29,8 +29,7 @@ describe Organism::Organism do
   end
 
   it "can create and delete a set of new organism properties from minimal proname => value hash " do
-    @new_organism_props = @yeast.create_organismprops({ :autocreate => true,
-                                                        :model_organism => true,
+    @new_organism_props = @yeast.create_organismprops({ :model_organism => true,
                                                         :genome_sequence_release_date => '1996-04-24' })
     @new_organism_props.must_be_kind_of Hash
     @new_organism_props.each{|property, value| value.must_be_kind_of Organism::OrganismProp}

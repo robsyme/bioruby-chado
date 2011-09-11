@@ -2,6 +2,7 @@ require 'rubygems'
 require 'bundler'
 require 'minitest/spec'
 require 'minitest/autorun'
+require 'pp'
 
 begin
   Bundler.setup(:default, :development)

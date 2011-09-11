@@ -12,6 +12,10 @@ module Bio
       # are represented using the phylogeny module, and taxonomies can
       # be represented using the cvterm module or the phylogeny
       # module.
+      # 
+      # Required properties for creating new {Organism} are:
+      # - genus - String
+      # - species - String
       
       class Organism
         include DataMapper::Resource
@@ -51,13 +55,13 @@ module Bio
         #   :versions => {}
         #   :allow_duplicate_values => false
         # @return [Hash] Hash of property_name => OrganismProp
-        # @example The organism is a model organism
+        # @example You want to add a property that signifies that yeast is a model organism (using the wikipedia article as a dbxref)
         #   yeast.create_organismprops({ :model_organism => true,
         #                                :db_name => 'Wikipedia',
         #                                :accessions => {:model_organism => "Model_organism"}})
+
         def create_organismprops(opts={})
           default_opts = {
-            :autocreate => false,
             :cv_name => 'organism_property',
             :db_name => 'null',
             :dbxref_accession_prefix => 'autocreated_',
@@ -98,6 +102,11 @@ module Bio
         end
       end
 
+      
+      # Required properties for creating new {OrganismDBxref} are:
+      # - organism - {Bio::Chado::Organism::Organism}
+      # - dbxref - {Bio::Chado::General::DBxref}
+
       class OrganismDBxref
         include DataMapper::Resource
         storage_names[:default] = 'organism_dbxref'
@@ -107,6 +116,19 @@ module Bio
         belongs_to :organism, 'Organism', :child_key => [:organism_id]
         belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
       end
+
+
+      # When an OrganismProp is destroyed, it checks to see if any
+      # other objects are using the same type
+      # ({Bio::Chado::CV::CVTerm}). If it is the last property using
+      # that type, it deletes the {Bio::Chado::CV::CVTerm CVTerm} as well. I prefer to keep the
+      # database free of orphaned {Bio::Chado::CV::CVTerm CVTerms}, but I'm happy to add the
+      # option of keeping the {Bio::Chado::CV::CVTerm CVTerms} if people would prefer that.
+      # 
+      # Required properties for creating new {OrganismProp} are:
+      # - organism - {Bio::Chado::Organism::Organism}
+      # - type - {Bio::Chado::CV::CVTerm}
+      # - rank - Integer
 
       class OrganismProp
         include DataMapper::Resource
