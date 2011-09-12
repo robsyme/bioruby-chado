@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This is just a test to see if I can get the rdoc to be generated
 
 module Bio
@@ -28,84 +29,99 @@ module Bio
         property :common_name, String
         property :comment, Text
 
-        # TODO: has_many :features, 'Bio::Chado::Sequence::Feature', :child_key[:organism_id]
+        # TODO: has_many :features, 'Sequence::Feature', :child_key[:organism_id]
 
         
         has n, :organism_dbxrefs, 'OrganismDBxref', :child_key => [:organism_id]
         has n, :organism_props, 'OrganismProp', :child_key => [:organism_id]
-        has n, :features, 'Bio::Chado::Sequence::Feature', :child_key => [:organism_id]
+        has n, :features, 'Sequence::Feature', :child_key => [:organism_id]
 
 
-        # convenience method to create organism properties using
-        # cvterms from the ontology with the given name.
-        # Accepts a hash or options.
+        # Create a new organism property. Each new organismprop needs
+        # a rank, a value and a {CV::CVTerm type}. The type has
+        # properties for a name, definition, {General::DBxref dbxref}
+        # and a {CV::CV controlled vocabulary}. The CV just needs a
+        # name + definition, and the dbxref needs an accession, a
+        # version, a description and a db. The db can take a name,
+        # description, urlprefix and a url:
         #
-        # The options hash takes organism properties in the form
-        # property_name => value.
-        # 
+        #     OrganismProp
+        #     ├ rank - created automatically
+        #     ├ value
+        #     └ type (CV::CVTerm)
+        #       ├ name
+        #       ├ definition
+        #       ├ dbxref (General::DBxref)
+        #       │ ├ accession
+        #       │ ├ version
+        #       │ ├ description
+        #       │ └ db (General::DB)
+        #       │   ├ name
+        #       │   ├ description
+        #       │   ├ urlprefix
+        #       │   └ url
+        #       └ cv (CV::CV)
+        #         ├ name
+        #         └ definition
         #
-        # @param [Hash] opts of options.
-        #   Defaults are:
-        #   :autocreate => false
-        #   :cv_name => 'organism_property'
-        #   :db_name => 'null'
-        #   :dbxref_accession_prefix => 'autocreated_'
-        #   :definitions => {}
-        #   :accessions => {}
-        #   :versions => {}
-        #   :allow_duplicate_values => false
-        # @return [Hash] Hash of property_name => OrganismProp
-        # @example You want to add a property that signifies that yeast is a model organism (using the wikipedia article as a dbxref)
-        #   yeast.create_organismprops({ :model_organism => true,
-        #                                :db_name => 'Wikipedia',
-        #                                :accessions => {:model_organism => "Model_organism"}})
+        # I think that it's fair to assume the user has already
+        # created a db and cv to hold the new properties, but that the
+        # method should create the CVTerm and DBxref automatically
+        #
+        # The user should also be able to give an existing CVTerm,
+        # which would eliminate the need to specify the dbxref as
+        # well. If the user doesn't give a dbxref, it should be
+        # created for them, using version=1, description="",
+        # accession="autocreated_" + value.
+        #
+        # @param [String] property_name The name (CVTerm name) of the new organism property.
+        # @param [General::DB] db The {General::DB} that this property's dbxref should belong to.
+        # @param [CV::CV] cv The {CV::CV} object that the property belongs to.
+        # @param [String] value The value of the new organism property
+        # @option opts [String] :definition ('') A human-readable text definition for the {CV::CVTerm}
+        # @option opts [String] :dbxref_description ('') The description used for the dbxref
+        # @option opts [String] :dbxref_accession ('autocreated_' + property_name) The local part of the identifier.
+        # @option opts [String] :dbxref_version ('1') The dbxref version.
+        # @option opts [Integer] :rank The property rank. This will auto-increment. 
+        
+        def create_organismprop(db, cv, opts={})
+          defaults = {
+            :definition => '',
+            :dbxref_description => nil,
+            :dbxref_accession => nil,
+            :dbxref_version => '1',
+            :rank => OrganismProp.all(:organism => self).count + 1}
 
-        def create_organismprops(opts={})
-          default_opts = {
-            :cv_name => 'organism_property',
-            :db_name => 'null',
-            :dbxref_accession_prefix => 'autocreated_',
-            :definitions => {},
-            :accessions => {},
-            :versions => {},
-            :allow_duplicate_values => false
-          }
+          options = defaults.merge(opts)
+          properties = options.reject{|key,value| defaults.keys.include?(key)}
 
-          new_opts = default_opts.merge(opts)
-          organism_props = opts.reject{|key,value| default_opts.keys.include? key }
+          property_name, property_value = properties.first
+          options[:dbxref_accession] = "autocreated_#{property_name}" unless options[:dbxref_accession]
+          $stderr.puts "WARNING: more than one property defined. Only using '#{property_name}'" if properties.length > 1
 
-
-          db = General::DB.first_or_create(:name => new_opts[:db_name])
-          cv = CV::CV.first_or_create(:name => new_opts[:cv_name])
-          final_hash = Hash.new
+          dbxref = General::DBxref.first_or_create({ :db => db,
+                                                     :version => options[:dbxref_version],
+                                                     :accession => options[:dbxref_accession] })
+          dbxref.update(:description => options[:dbxref_description])
           
-          organism_props.map do |property_name, value|
-            dbxref_accession = new_opts[:accessions][property_name] || new_opts[:dbxref_accession_prefix] + property_name.to_s
-            cvterm_version = new_opts[:versions][property_name]
-            cvterm_definition = new_opts[:definitions][property_name]
+          cvterm = CV::CVTerm.first_or_create({ :dbxref => dbxref,
+                                                :cv => cv,
+                                                :definition => options[:definition],
+                                                :name => property_name })
 
-            cvterm_dbxref = General::DBxref.first_or_create({ :db => db,
-                                                              :accession => dbxref_accession,
-                                                              :version => 1 })
-
-            cvterm = CV::CVTerm.first_or_create({ :cv => cv,
-                                                  :name => property_name,
-                                                  :definition => cvterm_definition,
-                                                  :dbxref => cvterm_dbxref  })
-            
-            prop = OrganismProp.first_or_create({ :organism => self,
-                                                  :type => cvterm,
-                                                  :value => value })
-            final_hash[property_name] = prop
-          end
-          final_hash
+          property_count = OrganismProp.all(:organism => self).count
+          property = OrganismProp.first_or_create({ :organism => self,
+                                         :type => cvterm,
+                                         :value => property_value })
+          property.update(:rank => options[:rank])
+          property
         end
       end
 
       
       # Required properties for creating new {OrganismDBxref} are:
-      # - organism - {Bio::Chado::Organism::Organism}
-      # - dbxref - {Bio::Chado::General::DBxref}
+      # - organism - {Organism::Organism}
+      # - dbxref - {General::DBxref}
 
       class OrganismDBxref
         include DataMapper::Resource
@@ -114,20 +130,20 @@ module Bio
         property :organism_dbxref_id, Serial
 
         belongs_to :organism, 'Organism', :child_key => [:organism_id]
-        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
+        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
       end
 
 
       # When an OrganismProp is destroyed, it checks to see if any
       # other objects are using the same type
-      # ({Bio::Chado::CV::CVTerm}). If it is the last property using
-      # that type, it deletes the {Bio::Chado::CV::CVTerm CVTerm} as well. I prefer to keep the
-      # database free of orphaned {Bio::Chado::CV::CVTerm CVTerms}, but I'm happy to add the
-      # option of keeping the {Bio::Chado::CV::CVTerm CVTerms} if people would prefer that.
+      # ({CV::CVTerm}). If it is the last property using
+      # that type, it deletes the {CV::CVTerm CVTerm} as well. I prefer to keep the
+      # database free of orphaned {CV::CVTerm CVTerms}, but I'm happy to add the
+      # option of keeping the {CV::CVTerm CVTerms} if people would prefer that.
       # 
       # Required properties for creating new {OrganismProp} are:
-      # - organism - {Bio::Chado::Organism::Organism}
-      # - type - {Bio::Chado::CV::CVTerm}
+      # - organism - {Organism::Organism}
+      # - type - {CV::CVTerm}
       # - rank - Integer
 
       class OrganismProp
@@ -139,7 +155,7 @@ module Bio
         property :rank, Integer
 
         belongs_to :organism, 'Organism', :child_key => [:organism_id]
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
 
         after :destroy do |organism_prop|
           if OrganismProp.all(:type => organism_prop.type).count == 0

@@ -21,7 +21,7 @@ module Bio
         storage_names[:default] = 'feature'
 
         property :feature_id, Serial
-        property :name, String
+        property :name, String, :length => 255
         property :uniquename, String
         property :residues, Text
         property :seqlen, Integer
@@ -31,19 +31,27 @@ module Bio
         property :timeaccessioned, DateTime
         property :timelastmodified, DateTime
 
-        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
-        belongs_to :organism, 'Bio::Chado::Organism::Organism', :child_key => [:organism_id]
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
+        belongs_to :organism, 'Organism::Organism', :child_key => [:organism_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
 
         has n, :feature_cvterms, 'FeatureCVTerm', :child_key => [:feature_id]
         has n, :feature_dbxrefs, 'FeatureDBxref', :child_key => [:feature_id]
         has n, :feature_pubs, 'FeaturePub', :child_key => [:feature_id]
-        has n, :feature_relationships, 'FeatureRelationship', :child_key => [:feature_id]
+        has n, :feature_relationships_as_subject, 'FeatureRelationship', :child_key => [:subject_id]
+        has n, :feature_relationships_as_object, 'FeatureRelationship', :child_key => [:object_id]
         has n, :featurelocs, 'Featureloc', :child_key => [:feature_id]
-        has n, :feaureprops, 'Featureprop', :child_key => [:feature_id]
+        has n, :featureprops, 'Featureprop', :child_key => [:feature_id]
 
-        #TODO: has n, :featureposs, 'Bio::Chado::Map::Featurepos', :child_key => [:feature_id]
-        #TODO: has n, :featureranges, 'Bio::Chado::Map::Featurerange', :child_key => [:feature_id]
+        #TODO: has n, :featureposs, 'Map::Featurepos', :child_key => [:feature_id]
+        #TODO: has n, :featureranges, 'Map::Featurerange', :child_key => [:feature_id]
+
+        # after :destroy do |feature|
+        #   if feature.dbxref.features.length == 0
+        #     feature.dbxref.destroy
+        #   end
+        # end
+
       end
 
       
@@ -66,8 +74,8 @@ module Bio
         property :is_not, Boolean
 
         belongs_to :feature, 'Feature', :child_key => [:feature_id]
-        belongs_to :cvterm, 'Bio::Chado::CV::CVTerm', :child_key => [:cvterm_id]
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :cvterm, 'CV::CVTerm', :child_key => [:cvterm_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
 
         has n, :feature_cvterm_dbxrefs, 'FeatureCVTermDBxref', :child_key => [:feature_cvterm_id]
         has n, :feature_cvterm_pubs, 'FeatureCVTermPub', :child_key => [:feature_cvterm_id]
@@ -95,8 +103,8 @@ module Bio
 
         property :feature_cvterm_dbxref_id, Serial
 
-        belongs_to :feaure_cvterm, 'FeatureCVTerm', :child_key => [:feature_cvterm_id]
-        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
+        belongs_to :feature_cvterm, 'FeatureCVTerm', :child_key => [:feature_cvterm_id]
+        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
       end
 
 
@@ -118,7 +126,7 @@ module Bio
         property :feature_cvterm_pub_id, Serial
 
         belongs_to :feature_cvterm, 'FeatureCVTerm', :child_key => [:feature_cvterm_id]
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
       end
 
 
@@ -143,7 +151,7 @@ module Bio
         property :rank, Integer
 
         belongs_to :feature_cvterm, 'FeatureCVTerm', :child_key => [:feature_cvterm_id]
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
       end
 
 
@@ -163,7 +171,7 @@ module Bio
         property :is_current, Boolean
 
         belongs_to :feature, 'Feature', :child_key => [:feature_id]
-        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
+        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
       end
 
 
@@ -181,7 +189,7 @@ module Bio
         property :feature_pub_id, Serial
 
         belongs_to :feature, 'Feature', :child_key => [:feature_id]
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
       end
 
 
@@ -201,7 +209,7 @@ module Bio
         property :rank, Integer
 
         belongs_to :feature, 'Feature', :child_key => [:feature_id]
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
       end
 
 
@@ -232,7 +240,7 @@ module Bio
 
         belongs_to :subject, 'Feature', :child_key => [:subject_id]
         belongs_to :object, 'Feature', :child_key => [:object_id]
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
 
         has n, :feature_relationship_pubs, 'FeatureRelationshipPub'
         has n, :feature_relationshipprops, 'FeatureRelationshipprop'
@@ -253,7 +261,7 @@ module Bio
         property :feature_relationship_pub_id, Serial
         property :value, Text
 
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
         belongs_to :feature_relationship, 'FeatureRelationship', :child_key => [:feature_relationship_id]
       end
 
@@ -281,7 +289,7 @@ module Bio
         property :rank, Integer
 
         belongs_to :feature_relationship, 'FeatureRelationship', :child_key => [:feature_relationship_id]
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
       end
 
 
@@ -298,7 +306,7 @@ module Bio
 
         property :feature_relationshipprop_pub_id, Serial 
         
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
         belongs_to :feature_relationshipprop, 'FeatureRelationshipprop', :child_key => [:feature_relationshipprop_id]
       end
 
@@ -320,7 +328,7 @@ module Bio
 
         belongs_to :synonym, 'Synonym', :child_key => [:synonym_id]
         belongs_to :feature, 'Feature', :child_key => [:feature_id]
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
       end
 
 
@@ -387,7 +395,7 @@ module Bio
         property :featureloc_pub_id, Serial
 
         belongs_to :featureloc, 'Featureloc', :child_key => [:featureloc_id]
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
       end
 
 
@@ -397,20 +405,19 @@ module Bio
       # extensible. 
       # 
       # Requried properties for creating a new {Featureprop} are:
-      # - featureloc - {Featureloc}
+      # - feature - {Feature}
       # - type - {CV::CVTerm}
-      # - rank - Integer
       
       class Featureprop
         include DataMapper::Resource
-        storage_names[:default] = 'feaureprop'
-
+        storage_names[:default] = 'featureprop'
+        
         property :featureprop_id, Serial
         property :value, Text
         property :rank, Integer
 
         belongs_to :feature, 'Feature', :child_key => [:feature_id]
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
 
         has n, :featureprop_pubs, 'FeaturepropPub', :child_key => [:featureprop_id]
       end
@@ -429,7 +436,7 @@ module Bio
 
         property :featureprop_pub_id, Serial
 
-        belongs_to :pub, 'Bio::Chado::Pub::Pub', :child_key => [:pub_id]
+        belongs_to :pub, 'Pub::Pub', :child_key => [:pub_id]
         belongs_to :featureprop, 'Featureprop', :child_key => [:featureprop_id]
       end
 
@@ -452,7 +459,7 @@ module Bio
         property :name, String
         property :synonym_sgml, String
 
-        belongs_to :type, 'Bio::Chado::CV::CVTerm', :child_key => [:type_id]
+        belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
 
         has n, :feature_synonyms, 'FeatureSynonym', :child_key => [:synonym_id]
       end
