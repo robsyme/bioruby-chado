@@ -9,5 +9,3 @@ require "bio/db/chado/pub"
 
 
 DataMapper::Property::String.length(255)
-debug_file = File.open("datamapper_debug.log", 'w')
-DataMapper::Logger.new(debug_file, :debug)
