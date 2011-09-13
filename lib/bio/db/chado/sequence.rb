@@ -1,5 +1,6 @@
 module Bio
   module Chado
+
     module Sequence
 
       # A feature is a biological sequence or a section of a
@@ -46,11 +47,11 @@ module Bio
         #TODO: has n, :featureposs, 'Map::Featurepos', :child_key => [:feature_id]
         #TODO: has n, :featureranges, 'Map::Featurerange', :child_key => [:feature_id]
 
-        # after :destroy do |feature|
-        #   if feature.dbxref.features.length == 0
-        #     feature.dbxref.destroy
-        #   end
-        # end
+        after :destroy do |feature|
+          if feature.dbxref.features.length == 0
+            feature.dbxref.destroy
+          end
+        end
 
       end
 

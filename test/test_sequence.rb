@@ -1,4 +1,5 @@
 require 'helper'
+require 'bio'
 
 describe Sequence::Feature do
 
@@ -16,9 +17,9 @@ describe Sequence::Feature do
     @chromosome_dbxref = General::DBxref.first_or_create({ :db => @sequence_ontology_db,
                                                            :accession => '0000340' })
     @chromosome_cvterm = CV::CVTerm.first_or_create({ :cv => @sequence_ontology_cv,
-                                                     :dbxref => @chromosome_dbxref,
-                                                     :name => 'chromosome' })
-    # @chromosome_cvterm.update(:definition => 'Structural unit composed of a nucleic acid molecule which controls its own replication through the interaction of specific proteins at one or more origins of replication.')
+                                                      :dbxref => @chromosome_dbxref,
+                                                      :name => 'chromosome' })
+    @chromosome_cvterm.update(:definition => 'Structural unit composed of a nucleic acid molecule which controls its own replication through the interaction of specific proteins at one or more origins of replication.')
     @chrom = Sequence::Feature.first_or_create({ :dbxref => @chrom_dbxref,
                                                  :organism => @yeast,
                                                  :type => @chromosome_cvterm,
@@ -37,14 +38,17 @@ describe Sequence::Feature do
     @chrom.valid?.must_equal true
   end
 
-  it "should destroy its dbxref when the feature is destroyed" do
+  it "should be able to destroy the feature" do
     @chrom.destroy.must_equal true
-    dbxref = @chrom.dbxref
-    pp @dbxref
   end
 
+  it "should destroy its dbxref when the feature is destroyed" do
+    @chrom.destroy
+    General::DBxref.get(@chrom.dbxref).must_be_nil
+  end
 
   after do
-    
+    @chrom.destroy if @chrom 
   end
+
 end

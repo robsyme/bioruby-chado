@@ -47,10 +47,29 @@ module Bio
         belongs_to :cv, 'CV', :child_key => [:cv_id]
         belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
 
-
         after :destroy do |cvterm|
           cvterm.dbxref.destroy if cvterm.dbxref
         end
+
+        def self.so_terms
+          so_cv = CV.first({ :name => "sequence" })
+          raise Chado::SequenceOntologyCVMissing unless so_cv
+
+          all( :cv => so_cv )
+        end
+
+        def self.method_missing(sym, *args)
+          match = sym.to_s.match(/^so_(?<cvterm>.*)/)
+          raise NoMethodError unless match
+
+          cvterm = CVTerm.so_terms.first(:name => match[:cvterm])
+          cvterm ||= CVTerm.so_terms.first(:dbxref => General::DBxref.first({ :accession => match[:cvterm],
+                                                                              :db => General::DB.first(:name => "SO") }))
+          raise Chado::MissingSequenceOntologyTerm, match[:cvterm] unless cvterm
+
+          cvterm
+        end
+
       end
 
       # In addition to the primary identifier (cvterm.dbxref_id) a
