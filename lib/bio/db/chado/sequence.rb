@@ -53,6 +53,19 @@ module Bio
           end
         end
 
+        def seq
+          Bio::Sequence::Generic.new(residues)
+        end
+
+        def seq=(sequence_string) 
+          self.residues = sequence_string
+          self.save
+        end
+
+        def initialize(opts)
+          super(opts)
+        end
+        
       end
 
       

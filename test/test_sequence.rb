@@ -47,6 +47,30 @@ describe Sequence::Feature do
     General::DBxref.get(@chrom.dbxref).must_be_nil
   end
 
+  it "should be able to save sequence data from a string" do
+    @chrom.seq = "ATGCATGCATGCTACTAGCATGTATCATCTAGCA"
+    new_chrom = Sequence::Feature.first_or_create({ :dbxref => @chrom_dbxref,
+                                                    :organism => @yeast,
+                                                    :type => @chromosome_cvterm,
+                                                    :name => 'Saccharomyces cerevisiae VL3 chromosome I, whole genome shotgun sequence.',
+                                                    :uniquename => 'chromI' })
+    new_chrom.residues.downcase.must_match /atgcatgcatgc/
+  end
+
+  it "should be able to save sequence data from a Bio::Sequence::NA object" do
+    @chrom.seq = Bio::Sequence::NA.new("ATGCATGCATGCTACTAGCATGTATCATCTAGCA")
+    new_chrom = Sequence::Feature.first_or_create({ :dbxref => @chrom_dbxref,
+                                                    :organism => @yeast,
+                                                    :type => @chromosome_cvterm,
+                                                    :name => 'Saccharomyces cerevisiae VL3 chromosome I, whole genome shotgun sequence.',
+                                                    :uniquename => 'chromI' })
+    new_chrom.residues.must_match /atgcatgcatgc/
+  end
+
+  it "should be able to import a Bio::Sequence object" do
+    biosequence = Bio::GenBank.new(File.read('test/data/S.nodorum_scaffold_55.genbank')).to_biosequence
+  end
+
   after do
     @chrom.destroy if @chrom 
   end

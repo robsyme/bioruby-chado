@@ -7,5 +7,6 @@ require "bio/db/chado/organism"
 require "bio/db/chado/sequence"
 require "bio/db/chado/pub"
 require "bio/db/chado/errors"
+require "bio/db/chado/chado_to_biosequence.rb"
 
 DataMapper::Property::String.length(255)
