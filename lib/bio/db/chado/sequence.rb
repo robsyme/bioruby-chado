@@ -3,6 +3,10 @@ module Bio
 
     module Sequence
 
+      # A class to represent a biological sequence in the Chado
+      # DB. The class is seperate to {Feature} so that it can also
+      # easily hold the data about publications, subfeatures etc.
+
       # A feature is a biological sequence or a section of a
       # biological sequence, or a collection of such
       # sections. Examples include genes, exons, transcripts,
@@ -32,7 +36,7 @@ module Bio
         property :timeaccessioned, DateTime
         property :timelastmodified, DateTime
 
-        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
+        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id], :required => false
         belongs_to :organism, 'Organism::Organism', :child_key => [:organism_id]
         belongs_to :type, 'CV::CVTerm', :child_key => [:type_id]
 
@@ -53,22 +57,12 @@ module Bio
           end
         end
 
-        def seq
-          Bio::Sequence::Generic.new(residues)
+        def subfeatures
+          
         end
 
-        def seq=(sequence_string) 
-          self.residues = sequence_string
-          self.save
-        end
-
-        def initialize(opts)
-          super(opts)
-        end
-        
       end
 
-      
       # Associate a term from a cv with a feature, for example, GO
       # annotation. Remember that the {Feature}
       # class has a {Feature#type type} property for primary cvterms,

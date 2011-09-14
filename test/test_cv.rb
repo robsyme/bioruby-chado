@@ -77,13 +77,6 @@ describe CV::CVTerm do
     end
   end
 
-  it "can easily find or create sequence ontology terms from SO accessions" do
-    gene = CV::CVTerm.so_0000704
-    gene.must_be_kind_of CV::CVTerm
-    gene.name.must_equal 'gene'
-    gene.dbxref.accession.must_equal '0000704'
-  end
-  
   after do
     @test_cvterm.destroy if @test_cvterm
   end

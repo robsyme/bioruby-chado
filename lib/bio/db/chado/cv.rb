@@ -51,23 +51,14 @@ module Bio
           cvterm.dbxref.destroy if cvterm.dbxref
         end
 
-        def self.so_terms
-          so_cv = CV.first({ :name => "sequence" })
-          raise Chado::SequenceOntologyCVMissing unless so_cv
-
-          all( :cv => so_cv )
-        end
-
         def self.method_missing(sym, *args)
           match = sym.to_s.match(/^so_(?<cvterm>.*)/)
           raise NoMethodError unless match
 
-          cvterm = CVTerm.so_terms.first(:name => match[:cvterm])
-          cvterm ||= CVTerm.so_terms.first(:dbxref => General::DBxref.first({ :accession => match[:cvterm],
-                                                                              :db => General::DB.first(:name => "SO") }))
-          raise Chado::MissingSequenceOntologyTerm, match[:cvterm] unless cvterm
+          id = repository(:default).adapter.select("SELECT get_feature_type_id('#{match[:cvterm]}')").first
+          raise Chado::MissingSequenceOntologyTerm, match[:cvterm] unless id
 
-          cvterm
+          CVTerm.get(id)
         end
 
       end
