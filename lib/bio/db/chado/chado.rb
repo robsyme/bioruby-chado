@@ -32,8 +32,14 @@ module Bio
 
         feature.update(:is_analysis => opts[:is_analysis]) if opts[:is_analysis]
         feature.update(:is_obsolete => opts[:is_obsolete]) if opts[:is_obsolete]
+
+        create_subfeatures(biosequence)
         
         feature
+      end
+
+      def create_subfeatures(biosequence)
+        
       end
       
       private
