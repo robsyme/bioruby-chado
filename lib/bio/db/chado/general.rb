@@ -40,7 +40,7 @@ module Bio
       # <DB>:<ACCESSION>:<VERSION>.
       #
       # Required properties for creating new {DBxref} are:
-      # - db - {Bio::Chado::General::DB}
+      # - db - {General::DB}
       # - accession - String
       # - version - String
       
@@ -53,9 +53,9 @@ module Bio
         property :version, String
         property :description, Text
 
-        has n, :cvterms, 'Bio::Chado::CV::CVTerm', :child_key => [:dbxref_id]
-        has n, :features, 'Bio::Chado::Sequence::Feature', :child_key => [:dbxref_id]
-        has n, :feature_cvterm_dbxrefs, 'Bio::Chado::Sequence::FeatureCVTermDBxref', :child_key => [:dbxref_id]
+        has n, :cvterms, 'CV::CVTerm', :child_key => [:dbxref_id]
+        has n, :features, 'Sequence::Feature', :child_key => [:dbxref_id]
+        has n, :feature_cvterm_dbxrefs, 'Sequence::FeatureCVTermDBxref', :child_key => [:dbxref_id]
         
         belongs_to :db, 'DB', :child_key => [:db_id]
       end

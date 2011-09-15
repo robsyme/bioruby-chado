@@ -1,6 +1,4 @@
 require 'helper'
-require 'date'
-require 'pp'
 
 describe Organism::Organism do
 
@@ -28,22 +26,18 @@ describe Organism::Organism do
     @test_org.destroy.must_equal true
   end
 
-  it "can create and destroy a set of new organism properties from minimal proname => value hash " do
-    @new_organism_props = @yeast.create_organismprops({ :model_organism => true,
-                                                        :genome_sequence_release_date => '1996-04-24' })
-    @new_organism_props.must_be_kind_of Hash
-    @new_organism_props.each{|property, value| value.must_be_kind_of Organism::OrganismProp}
-    @new_organism_props[:model_organism].value.must_equal "true"
-    @new_organism_props[:genome_sequence_release_date].value.must_equal '1996-04-24'
+  it "can create a new organism property with one method call" do
+    wikipedia_db = General::DB.first_or_create(:name => "Wikipedia")
+    cv = CV::CV.first_or_create(:name => 'organism_property')
 
-    @new_organism_props.each do |property_name, property|
-      property.destroy.must_equal true
-    end
+    property = @yeast.create_organismprop(wikipedia_db,cv, { :definition => "A model organism", :model_organism => true })
 
-    @new_organism_props.each do |property_name, property|
-      CV::CVTerm.get(property.type.cvterm_id).must_be_nil
-      General::DBxref.get(property.type.dbxref.dbxref_id).must_be_nil
-    end
+    property.valid?.must_equal true
+    property.saved?.must_equal true
+    property.value.must_equal 'true'
+    property.rank.must_equal 1
+    property.type.name.must_equal "model_organism" 
+    property.destroy.must_equal true
   end
 
   after do
@@ -92,6 +86,7 @@ describe Organism::OrganismDBxref do
 end
 
 describe Organism::OrganismProp do
-  # TODO: Organism properties are so rarely used, do it later.
+  # TODO: Organism properties are rarely used, and it's such a simple
+  # class. I'll write tests later.
 end
 

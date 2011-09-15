@@ -56,7 +56,27 @@ describe CV::CVTerm do
     @test_cvterm.is_obsolete.must_equal false
     @test_cvterm.is_relationshiptype.must_equal false
   end
-  
+
+  it "can easily find or create sequence ontology terms" do
+    gene = CV::CVTerm.so_gene
+    gene.must_be_kind_of CV::CVTerm
+    gene.name.must_equal 'gene'
+    gene.dbxref.accession.must_equal '0000704'
+    
+    proc{CV::CVTerm.so_foobar}.must_raise MissingSequenceOntologyTerm
+
+    # You can catch the SO terms with a begin/rescue/end.
+    # The error object has an instance variable "cvterm" that holds
+    # the name of the mising cvterm.
+    # The user might want to supply an obo file which could then be
+    # scanned for the missing term which can then be added to the DB.
+    begin
+      CV::CVTerm.so_foobar
+    rescue MissingSequenceOntologyTerm => error
+      error.cvterm.must_equal "foobar"
+    end
+  end
+
   after do
     @test_cvterm.destroy if @test_cvterm
   end

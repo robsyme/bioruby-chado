@@ -37,20 +37,30 @@ module Bio
         property :is_relationshiptype, Integer
 
         has n, :cverm_dbxrefs, 'CVTermDBxref', :child_key => [:cvterm_id]
-        has n, :pubs, 'Bio::Chado::Pub::Pub', :child_key => [:type_id]
-        has n, :pub_relationships, 'Bio::Chado::Pub::PubRelationship', :child_key => [:type_id]
-        has n, :pubprops, 'Bio::Chado::Pub::Pubprop', :child_key => [:type_id]
-        has n, :organism_props, 'Bio::Chado::Organism::OrganismProp', :child_key => [:type_id]
-        has n, :features, 'Bio::Chado::Sequence::Feature', :child_key => [:type_id]
-        has n, :feature_cvterms, 'Bio::Chado::Sequence::FeatureCVTerm', :child_key => [:cvterm_id]
+        has n, :pubs, 'Pub::Pub', :child_key => [:type_id]
+        has n, :pub_relationships, 'Pub::PubRelationship', :child_key => [:type_id]
+        has n, :pubprops, 'Pub::Pubprop', :child_key => [:type_id]
+        has n, :organism_props, 'Organism::OrganismProp', :child_key => [:type_id]
+        has n, :features, 'Sequence::Feature', :child_key => [:type_id]
+        has n, :feature_cvterms, 'Sequence::FeatureCVTerm', :child_key => [:cvterm_id]
         
         belongs_to :cv, 'CV', :child_key => [:cv_id]
-        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
-
+        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
 
         after :destroy do |cvterm|
           cvterm.dbxref.destroy if cvterm.dbxref
         end
+
+        def self.method_missing(sym, *args)
+          match = sym.to_s.match(/^so_(?<cvterm>.*)/)
+          raise NoMethodError unless match
+
+          id = repository(:default).adapter.select("SELECT get_feature_type_id('#{match[:cvterm]}')").first
+          raise Chado::MissingSequenceOntologyTerm, match[:cvterm] unless id
+
+          CVTerm.get(id)
+        end
+
       end
 
       # In addition to the primary identifier (cvterm.dbxref_id) a
@@ -78,7 +88,7 @@ module Bio
         property :is_for_definition, Integer
 
         belongs_to :cvterm, 'CVTerm', :child_key => [:cvterm_id]
-        belongs_to :dbxref, 'Bio::Chado::General::DBxref', :child_key => [:dbxref_id]
+        belongs_to :dbxref, 'General::DBxref', :child_key => [:dbxref_id]
       end
 
       # A relationship linking two cvterms. Each cvterm_relationship
