@@ -24,4 +24,12 @@ describe ChadoSeq do
     General::DBxref.get(dbxref.dbxref_id).must_be_nil
   end
 
+  it "should raise an error if the biosequence object doesn't have an organism" do
+    @biosequence.species = nil
+    
+    proc do
+      ChadoSeq.new({ :biosequence => @biosequence, :type => 'supercontig' })
+    end.must_raise IncompleteBiosequenceError
+  end
+
 end

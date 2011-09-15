@@ -45,6 +45,7 @@ module Bio
       private
       
       def first_or_create_organism(biosequence)
+        check_completeness(biosequence)
         genus, *species = biosequence.species.split(" ")
         organism = Organism::Organism.first_or_create({ :genus => genus,
                                                         :species => species.join(" ") })
@@ -53,6 +54,10 @@ module Bio
         organism.update(:abbreviation => @opts[:organism_abbreviation]) if @opts[:organism_abbreviation]
 
         organism
+      end
+
+      def check_completeness(biosequence)
+        raise IncompleteBiosequenceError, biosequence if biosequence.species == "" or biosequence.species.nil?
       end
 
       def first_or_create_cvterm(biosequence)
