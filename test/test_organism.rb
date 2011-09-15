@@ -28,7 +28,7 @@ describe Organism::Organism do
     @test_org.destroy.must_equal true
   end
 
-  it "can create and delete a set of new organism properties from minimal proname => value hash " do
+  it "can create and destroy a set of new organism properties from minimal proname => value hash " do
     @new_organism_props = @yeast.create_organismprops({ :model_organism => true,
                                                         :genome_sequence_release_date => '1996-04-24' })
     @new_organism_props.must_be_kind_of Hash

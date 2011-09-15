@@ -55,7 +55,7 @@ end
 
 describe Pub::PubDBxref do
   before do
-    
+
   end
 
   after do
