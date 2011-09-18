@@ -15,6 +15,6 @@ require "bio/db/chado/sequence"
 require "bio/db/chado/pub"
 require "bio/db/chado/errors"
 require "bio/db/chado/chado"
-
+require "bio/db/chado/gff"
 
 

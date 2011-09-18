@@ -1,6 +1,5 @@
 module Bio
   module Chado
-
     
     class EntryMissingError < StandardError; end
 
